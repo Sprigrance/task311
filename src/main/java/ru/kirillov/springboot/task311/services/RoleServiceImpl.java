@@ -47,4 +47,19 @@ public class RoleServiceImpl implements RoleService {
         }
         return rolesSet;
     }
+
+    @Override
+    @Transactional
+    public Set<Role> checkRoles(String[] strRoles, String newRole) {
+        Set<Role> roles = new HashSet<>();
+        if (strRoles != null) {
+            roles = getSetRoleFromArray(strRoles);
+        }
+        if (!newRole.equals("")) {                                     // Если есть новая роль - сохраняем
+            Role role = new Role(newRole);
+            saveRole(role);
+            roles.add(role);
+        }
+        return roles;
+    }
 }

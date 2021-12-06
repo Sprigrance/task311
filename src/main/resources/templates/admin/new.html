@@ -18,8 +18,23 @@
     <br/>
 
     <!-- @RequestParam String[] strRoles -->
-    <input type="checkbox" name="strRoles" th:value="ROLE_ADMIN" th:text="ADMIN" />
-    <input type="checkbox" name="strRoles" th:value="ROLE_USER" th:text="USER" />
+    <span><b>Select the MAIN role(s) for a new user:</b></span>
+<!--    <input type="checkbox" name="strRoles" th:value="ROLE_ADMIN" th:text="ADMIN" />-->
+<!--    <input type="checkbox" name="strRoles" th:value="ROLE_USER" th:text="USER" required/>-->
+    <div th:each="role : ${allRoles}">
+        <input type="checkbox" name="strRoles"
+               th:value="${role.name}"
+               th:text="${role.name}"/>
+    </div>
+
+    <!-- @RequestParam String newRole -->
+    <label for="role">You can add an ADDITIONAL role:</label>
+    <input type="text" name="newRole" id="role"/>
+    <br/>
+
+
+<!--    <input type="checkbox" name="strRoles" th:value="ROLE_ADMIN" th:text="ADMIN" />-->
+<!--    <input type="checkbox" name="strRoles" th:value="ROLE_USER" th:text="USER" />-->
     <br/>
 
     <input type="submit" value="Create!"/>

@@ -10,8 +10,7 @@
 <p th:text="${user.getId()}"></p>
 <p th:text="${user.getUsername()}"></p>
 
-<!--<h3>User's roles:</h3> &lt;!&ndash; заголовок 3го уровня &ndash;&gt;-->
-User's roles: <!-- заголовок 3го уровня -->
+User's roles:
 <th:block th:each="role : ${user.getRoles()}">
     <p th:text="${role.getName()}"></p>
 </th:block>

@@ -10,4 +10,6 @@ public interface RoleService {
     Role getRoleByName(String role);
     void saveRole(Role role);
     Set<Role> getSetRoleFromArray(String[] roles);
+
+    Set<Role> checkRoles(String[] roles, String newRole);
 }

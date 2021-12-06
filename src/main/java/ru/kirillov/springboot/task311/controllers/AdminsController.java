@@ -5,9 +5,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kirillov.springboot.task311.models.Role;
 import ru.kirillov.springboot.task311.models.User;
 import ru.kirillov.springboot.task311.services.RoleService;
 import ru.kirillov.springboot.task311.services.UserService;
+
+import javax.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admins")
@@ -40,7 +45,8 @@ public class AdminsController {
 
     // GET-запрос создаст модель "newUser" и поместит его как объект для создания в new.html
     @GetMapping("/new")
-    public String createUser(@ModelAttribute("newUser") User user) {
+    public String createUser(@ModelAttribute("newUser") User user, Model model) {
+        model.addAttribute("allRoles", roleService.getAllRoles());
         return "admin/new";
     }
 
@@ -51,10 +57,22 @@ public class AdminsController {
     // Если никакого User модель содержать не будет, то в User user поместится user с полями по умолчанию (0, null, null)
     @PostMapping()
     public String addUser(@ModelAttribute("newUser") User user,
-                          @RequestParam String[] strRoles) {
+                          @RequestParam String[] strRoles, String newRole) {
 
+        Set<Role> roles = roleService.checkRoles(strRoles, newRole);
+
+//        Set<Role> roles = new HashSet<>();
+//        if (strRoles != null) {
+//            roles = roleService.getSetRoleFromArray(strRoles);
+//        }
+//        if (!newRole.equals("")) {                                     // Если есть новая роль - сохраняем
+//            Role role = new Role(newRole);
+//            roleService.saveRole(role);
+//            roles.add(role);
+//        }
+
+        user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));  // Шифруем пароль
-        user.setRoles(roleService.getSetRoleFromArray(strRoles));      // Преобразовываем роли
         userService.saveUser(user);
         return "redirect:/admins";
     }
@@ -64,6 +82,7 @@ public class AdminsController {
     @GetMapping("/{id}/edit")
     public String editUser(@PathVariable("id") int id, Model model) {
         model.addAttribute("existingUser", userService.getUser(id));
+        model.addAttribute("allRoles", roleService.getAllRoles());
         return "admin/editUser";
     }
 
@@ -73,9 +92,10 @@ public class AdminsController {
     @PatchMapping("/{id}")
     public String updateUser(@ModelAttribute("existingUser") User user,
                              @PathVariable("id") int id,
-                             @RequestParam String[] strRoles) {
+                             @RequestParam String[] strRoles, String newRole) {
 
-        user.setRoles(roleService.getSetRoleFromArray(strRoles));      // Преобразовываем роли
+        Set<Role> roles = roleService.checkRoles(strRoles, newRole);
+        user.setRoles(roles);
         userService.updateUser(id, user);
         return "redirect:/admins";
     }
